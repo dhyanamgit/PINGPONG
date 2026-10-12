@@ -9,6 +9,9 @@ FADEWHITE=(245, 255,255)
 screen= pygame.display.set_mode((WIDTH,HEIGHT))
 pygame.display.set_caption("Ping Pong")
 running=True
+score_1 = 0
+score_2=0
+font = pygame.font.SysFont('None', 40)
 
 player1 = pygame.Surface((10,80))
 player1.fill(WHITE)
@@ -36,6 +39,10 @@ pygame.draw.circle(ball, WHITE, (10,10), 10)
 
 clock = pygame.time.Clock()
 
+def display_text(text, x,y):
+    display = font.render(text, True, WHITE)
+    screen.blit(display,(x,y))
+
 while running:
     screen.fill(BLACK)
     key_get = pygame.key.get_pressed()
@@ -55,13 +62,15 @@ while running:
                 if player2_y < 320:
                     player2_y += player2_speed  
             
-    if ball_x == player2_x - 20 and ball_y in range(player2_y- 20, player2_y+80):
-        speed_ball_x *= -1
-        speed_ball_y *= -1
-    if ball_x == player1_x and ball_y in range(player2_y- 20, player2_y+80):
-        speed_ball_x =speed_ball_x * -1
-        speed_ball_y = speed_ball_y * -1
         
+    if ball_y < 0 or ball_y > 380:
+        speed_ball_y *= -1   
+        
+    if ball_x + 20 >= player2_x and player2_y-20 <= ball_y <= player2_y + 80:
+        speed_ball_x *= -1
+    if ball_x <= player1_x + 10 and player1_y - 20 <= ball_y <= player1_y +80:
+        speed_ball_x *= -1
+                
     ball_x += speed_ball_x
     ball_y += speed_ball_y            
                 
@@ -69,10 +78,23 @@ while running:
     screen.blit(player2, (player2_x, player2_y))
     screen.blit(divider, (divider_x, divider_y))
     screen.blit(ball, (ball_x,ball_y))
+    
+    
+    if ball_x > 800:
+        score_1 += 1
+        ball_x = 380
+        ball_y = 180
+    
+    if ball_x < 0:
+        score_2 += 1
+        ball_x = 380
+        ball_y = 180
+            
+    display_text(str(score_1), 50, 10)
+    display_text(str(score_2), 750, 10)
     pygame.display.update()
     
     clock.tick(60)
-    
-
+        
 sys.exit()
 pygame.quit()
